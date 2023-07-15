@@ -1,76 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ERPNext Cases</title>
+    <title>Case List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            margin-bottom: 10px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 5px;
+            padding: 10px;
+            background-color: #f2f2f2;
+            border-radius: 5px;
+        }
+        .case-name {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-  <h1>ERPNext Cases</h1>
-  <ul id="cases-list"></ul>
+    <h1>Case List</h1>
+    <ul id="case-list"></ul>
 
-  <script>
-    const apiKey = '0a269f112eaa757';
-    const apiSecret = '09b775a8259d857';
-
-    async function fetchCases() {
-      const url = 'https://accountinghu.frappe.cloud/api/resource/Cases';
-      const headers = {
-        'Authorization': `Bearer ${apiKey}:${apiSecret}`,
-        'Content-Type': 'application/json'
-      };
-
-      const data = {
-        parameters: {
-          operation: 'getAll',
-          docType: 'Cases',
-          options: {
-            filters: {
-              customProperty: [
-                {
-                  field: 'status',
-                  value: 'In progress'
-                }
-              ]
+    <script>
+        // Fetch case data from the API
+        fetch('https://accountinghu.frappe.cloud/api/resource/Cases?operation=getAll&docType=Cases&options[filters][customProperty][0][field]=status&options[filters][customProperty][0][value]=In%20progress', {
+            headers: {
+                'Authorization': 'token 0a269f112eaa757:09b775a8259d857',
+                'Accept': 'application/json'
             }
-          }
-        }
-      };
+        })
+        .then(response => response.json())
+        .then(data => {
+            const caseList = document.getElementById('case-list');
 
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify(data)
+            data.data.forEach(caseData => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span class="case-name">${caseData.name}</span> - ${caseData.subject}
+                `;
+                caseList.appendChild(li);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch cases: ${response.status} ${response.statusText}`);
-        }
-
-        const responseData = await response.json();
-        if (responseData.data) {
-          displayCases(responseData.data);
-        } else {
-          throw new Error('No cases found');
-        }
-      } catch (error) {
-        console.error(error);
-        const errorElement = document.createElement('p');
-        errorElement.textContent = `Error: ${error.message}`;
-        document.body.appendChild(errorElement);
-      }
-    }
-
-    function displayCases(cases) {
-      const casesList = document.getElementById('cases-list');
-
-      cases.forEach((caseData) => {
-        const listItem = document.createElement('li');
-        listItem.textContent = caseData.subject;
-        casesList.appendChild(listItem);
-      });
-    }
-
-    fetchCases();
-  </script>
+    </script>
 </body>
 </html>
