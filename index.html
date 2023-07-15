@@ -31,7 +31,7 @@
 
     <script>
         // Fetch case data from the API
-        fetch('https://accountinghu.frappe.cloud/api/resource/Cases?operation=getAll&docType=Cases&options[filters][customProperty][0][field]=status&options[filters][customProperty][0][value]=In%20progress', {
+        fetch('https://accountinghu.frappe.cloud/api/resource/Cases?fields=["name", "subject"]&filters=[["status", "=", "In Progress"]]', {
             headers: {
                 'Authorization': 'token 0a269f112eaa757:09b775a8259d857',
                 'Accept': 'application/json'
