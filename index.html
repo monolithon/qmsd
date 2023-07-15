@@ -26,32 +26,32 @@
     </style>
 </head>
 <body>
-    <h1>Case List</h1>
     <ul id="case-list"></ul>
 
-    <script>
-        // Fetch case data from the API
-        fetch('https://accountinghu.frappe.cloud/api/resource/Cases?operation=getAll&docType=Cases&options[filters][customProperty][0][field]=status&options[filters][customProperty][0][value]=In%20progress', {
-            headers: {
-                'Authorization': 'token 0a269f112eaa757:09b775a8259d857',
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            const caseList = document.getElementById('case-list');
+   <script>
+  // Fetch case data from the API
+  fetch('https://accountinghu.frappe.cloud/api/resource/Cases?filters=[["status", "=", "In progress"]]', {
+    headers: {
+      'Authorization': 'token 0a269f112eaa757:09b775a8259d857',
+      'Accept': 'application/json'
+    }
+  })
+    .then(response => response.json())
+    .then(data => {
+      const caseList = document.getElementById('case-list');
 
-            data.data.forEach(caseData => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <span class="case-name">${caseData.name}</span> - ${caseData.subject}
-                `;
-                caseList.appendChild(li);
-            });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    </script>
+      data.data.forEach(caseData => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span class="case-name">${caseData.name}</span> - ${caseData.subject}
+        `;
+        caseList.appendChild(li);
+      });
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+</script>
+
 </body>
 </html>
