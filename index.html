@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ERPNext Cases</title>
+</head>
+<body>
+  <h1>ERPNext Cases</h1>
+  <ul id="cases-list"></ul>
+
+  <script>
+    const apiKey = '0a269f112eaa757';
+    const apiSecret = '09b775a8259d857';
+
+    async function fetchCases() {
+      const url = 'https://accountinghu.frappe.cloud/api/resource/Cases';
+      const headers = {
+        'Authorization': `Bearer ${apiKey}:${apiSecret}`,
+        'Content-Type': 'application/json'
+      };
+
+      const data = {
+        parameters: {
+          operation: 'getAll',
+          docType: 'Cases',
+          options: {
+            filters: {
+              customProperty: [
+                {
+                  field: 'status',
+                  value: 'In progress'
+                }
+              ]
+            }
+          }
+        }
+      };
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch cases: ${response.status} ${response.statusText}`);
+        }
+
+        const responseData = await response.json();
+        if (responseData.data) {
+          displayCases(responseData.data);
+        } else {
+          throw new Error('No cases found');
+        }
+      } catch (error) {
+        console.error(error);
+        const errorElement = document.createElement('p');
+        errorElement.textContent = `Error: ${error.message}`;
+        document.body.appendChild(errorElement);
+      }
+    }
+
+    function displayCases(cases) {
+      const casesList = document.getElementById('cases-list');
+
+      cases.forEach((caseData) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = caseData.subject;
+        casesList.appendChild(listItem);
+      });
+    }
+
+    fetchCases();
+  </script>
+</body>
+</html>
